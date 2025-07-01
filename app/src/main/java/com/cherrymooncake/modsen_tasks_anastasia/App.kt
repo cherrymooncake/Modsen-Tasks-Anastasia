@@ -1,9 +1,7 @@
 package com.cherrymooncake.modsen_tasks_anastasia
 
 import android.app.Application
-import com.cherrymooncake.modsen_tasks_anastasia.di.appModule
-import com.cherrymooncake.modsen_tasks_anastasia.di.dataModule
-import com.cherrymooncake.modsen_tasks_anastasia.di.domainModule
+import com.cherrymooncake.modsen_tasks_anastasia.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -16,7 +14,11 @@ class App : Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@App)
-            modules(listOf(appModule, dataModule, domainModule))
+            modules(
+                dataModule,
+                domainModule,
+                appModule
+            )
         }
     }
 }

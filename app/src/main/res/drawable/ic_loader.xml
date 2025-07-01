@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!--
+        - M12,4: Переместить в точку (12, 4).
+        - V2: Нарисовать линию до (12, 2).
+        - A10,10 0 0,0 2,12: Нарисовать дугу радиусом 10 до (2, 12).
+        - H4: Нарисовать линию до (4, 12).
+        - A8,8 0 0,1 12,4: Нарисовать дугу радиусом 8 обратно к (12, 4).
+        - Z: Замкнуть.
+    -->
+    <path
+        android:fillColor="#0080FF"
+        android:pathData="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+
+</vector>

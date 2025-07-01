@@ -14,31 +14,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cherrymooncake.modsen_tasks_anastasia.R
 import com.cherrymooncake.modsen_tasks_anastasia.ui.navigation.ScreenRoute
+import com.cherrymooncake.modsen_tasks_anastasia.ui.theme.ModsenTasksAnastasiaTheme
+import kotlinx.coroutines.flow.Flow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinViewModel()) {
+fun LoginScreen(
+    onNavigateToSuccess: () -> Unit,
+    viewModel: LoginViewModel = koinViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val onIntent: (LoginIntent) -> Unit by remember { mutableStateOf(viewModel::onIntent) }
+    val event: Flow<LoginEvent> by remember { mutableStateOf(viewModel.event) }
+
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.event.collect { event ->
+        event.collect { event ->
             when (event) {
                 is LoginEvent.ShowError -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
-                is LoginEvent.NavigateToSuccessScreen -> { //
-                    navController.navigate(ScreenRoute.SuccessLogin.route) {
-                        popUpTo(ScreenRoute.Login.route) { inclusive = true }
-                    }
+                is LoginEvent.NavigateToSuccessScreen -> {
+                    onNavigateToSuccess()
                 }
             }
         }
     }
+    LoginScreenContent(
+        state = state,
+        onIntent = onIntent
+    )
+}
 
+@Composable
+private fun LoginScreenContent(
+    state: LoginState,
+    onIntent: (LoginIntent) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -50,25 +67,28 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text( text = stringResource(R.string.login_screen_header), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = stringResource(R.string.login_screen_header),
+                style = MaterialTheme.typography.headlineMedium
+            )
 
             OutlinedTextField(
                 value = state.loginInput,
-                onValueChange = { viewModel.onIntent(LoginIntent.OnLoginChanged(it)) },
+                onValueChange = { onIntent(LoginIntent.OnLoginChanged(it)) },
                 label = { Text(stringResource(R.string.login_screen_login_field_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = state.passwordInput,
-                onValueChange = { viewModel.onIntent(LoginIntent.OnPasswordChanged(it)) },
+                onValueChange = { onIntent(LoginIntent.OnPasswordChanged(it)) },
                 label = { Text(stringResource(R.string.login_screen_password_field_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Button(
-                onClick = { viewModel.onIntent(LoginIntent.OnLoginClick) },
+                onClick = { onIntent(LoginIntent.OnLoginClick) },
                 enabled = state.isLoginButtonEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -76,5 +96,74 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
             }
         }
     }
-
 }
+
+@Preview(showBackground = true, name = "Login Screen - Default")
+@Composable
+private fun LoginScreenPreview() {
+    ModsenTasksAnastasiaTheme {
+        LoginScreenContent(
+            state = LoginState(loginInput = "user", passwordInput = "1234"),
+            onIntent = {}
+        )
+    }
+}
+
+//@Composable
+//fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinViewModel()) {
+//    val state by viewModel.state.collectAsStateWithLifecycle()
+//    val context = LocalContext.current
+//    LaunchedEffect(Unit) {
+//        viewModel.event.collect { event ->
+//            when (event) {
+//                is LoginEvent.ShowError -> {
+//                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+//                }
+//                is LoginEvent.NavigateToSuccessScreen -> { //
+//                    navController.navigate(ScreenRoute.SuccessLogin.route) {
+//                        popUpTo(ScreenRoute.Login.route) { inclusive = true }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    Box(
+//        modifier = Modifier.fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(32.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
+//            Text( text = stringResource(R.string.login_screen_header), style = MaterialTheme.typography.headlineMedium)
+//
+//            OutlinedTextField(
+//                value = state.loginInput,
+//                onValueChange = { viewModel.onIntent(LoginIntent.OnLoginChanged(it)) },
+//                label = { Text(stringResource(R.string.login_screen_login_field_label)) },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            OutlinedTextField(
+//                value = state.passwordInput,
+//                onValueChange = { viewModel.onIntent(LoginIntent.OnPasswordChanged(it)) },
+//                label = { Text(stringResource(R.string.login_screen_password_field_label)) },
+//                visualTransformation = PasswordVisualTransformation(),
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//
+//            Button(
+//                onClick = { viewModel.onIntent(LoginIntent.OnLoginClick) },
+//                enabled = state.isLoginButtonEnabled,
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                Text(stringResource(R.string.login_screen_button_text))
+//            }
+//        }
+//    }
+//
+//}
