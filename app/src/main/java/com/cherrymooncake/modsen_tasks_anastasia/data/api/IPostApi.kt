@@ -1,16 +1,20 @@
 package com.cherrymooncake.modsen_tasks_anastasia.data.api
 
+import com.cherrymooncake.modsen_tasks_anastasia.data.model.CommentApiModel
 import com.cherrymooncake.modsen_tasks_anastasia.data.model.PostApiModel
 import retrofit2.http.GET
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
 interface IPostApi {
     @GET("posts")
     suspend fun getPosts(): List<PostApiModel>
+    @GET("comments")
+    suspend fun getComments(@Query("postId") postId: Int): List<CommentApiModel>
 
     companion object {
         private const val BASE_URL = "https://jsonplaceholder.typicode.com/"

@@ -9,6 +9,15 @@ data class PostUiModel (
     val body: String
 )
 
+fun PostUiModel.toDomainModel(): PostDomainModel {
+    return PostDomainModel(
+        id = this.id,
+        userId = this.userId,
+        title = this.title,
+        body = this.body
+    )
+}
+
 fun PostDomainModel.toUiModel(): PostUiModel {
     return PostUiModel(
         userId = this.userId,

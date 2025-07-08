@@ -11,4 +11,8 @@
     <string name="other_exception_text">Unexpected error</string>
     <string name="no_internet_exception_text">No Internet connection</string>
     <string name="posts_header">Posts</string>
+    <string name="post_header">Post</string>
+    <string name="search_hint">Search...</string>
+    <string name="comments_header">Comments</string>
+    <string name="error_post_data_could_not_be_retrieved">Error: Post data could not be retrieved.</string>
 </resources>

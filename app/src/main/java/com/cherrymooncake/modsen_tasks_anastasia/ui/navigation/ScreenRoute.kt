@@ -5,4 +5,5 @@ sealed class ScreenRoute(val route: String){
     data object TaskList: ScreenRoute("tasks_list_screen")
     data object SuccessLogin: ScreenRoute("success_screen")
     data object Posts: ScreenRoute("posts_screen")
+    data object PostComments : ScreenRoute("post_comments_screen")
 }
