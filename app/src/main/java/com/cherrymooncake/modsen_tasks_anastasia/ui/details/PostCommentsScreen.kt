@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,13 +34,18 @@ fun PostCommentsScreen(post: PostDomainModel) {
         parameters = { parametersOf(post) }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val onIntent = remember<(PostCommentsIntent) -> Unit> { { viewModel.onIntent(it) } }
 
-    PostCommentsContent(state = state)
+    PostCommentsContent(
+        state = state,
+        intent = onIntent
+    )
 }
 
 @Composable
 private fun PostCommentsContent(
-    state: PostCommentsState
+    state: PostCommentsState,
+    intent: (PostCommentsIntent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -51,7 +57,10 @@ private fun PostCommentsContent(
                 text = stringResource(R.string.post_header),
                 style = MaterialTheme.typography.headlineSmall,
             )
-            PostItem(post = state.post.toUiModel())
+            PostItem(
+                post = state.post.toUiModel(),
+                onFavoriteClick = { intent(PostCommentsIntent.ToggleFavorite) }
+            )
             Divider(modifier = Modifier.padding(vertical = 16.dp))
             Text(stringResource(R.string.comments_header), style = MaterialTheme.typography.titleLarge)
         }

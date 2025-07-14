@@ -11,14 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cherrymooncake.modsen_tasks_anastasia.ui.common.CustomLoader
-import com.cherrymooncake.modsen_tasks_anastasia.ui.common.PostItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,11 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cherrymooncake.modsen_tasks_anastasia.R
 import com.cherrymooncake.modsen_tasks_anastasia.domain.model.PostDomainModel
+import com.cherrymooncake.modsen_tasks_anastasia.ui.common.CustomLoader
+import com.cherrymooncake.modsen_tasks_anastasia.ui.common.PostItem
 import com.cherrymooncake.modsen_tasks_anastasia.ui.common.SearchTextField
+import com.cherrymooncake.modsen_tasks_anastasia.ui.common.swipeToToggleFavorite
 import com.cherrymooncake.modsen_tasks_anastasia.ui.theme.ModsenTasksAnastasiaTheme
 import kotlinx.coroutines.flow.Flow
 import org.koin.androidx.compose.koinViewModel
@@ -43,7 +44,7 @@ fun PostsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val onIntent = remember<(PostsIntent) -> Unit> { { viewModel.sendIntent(it) } }
-    val eventFlow: Flow<PostsEvent> by remember { mutableStateOf(viewModel.event) }
+    val eventFlow: Flow<PostsEvent> by remember { mutableStateOf(viewModel.eventFlow) }
 
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
@@ -108,15 +109,18 @@ private fun PostsContent(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             items(items = state.filteredPosts, key = { it.id }) { post ->
-                                Box(modifier = Modifier.clickable {
-                                    onIntent(PostsIntent.OnPostClick(post.toDomainModel()))
-                                }) {
-                                    PostItem(post = post)
+                                Box(
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .swipeToToggleFavorite { onIntent(PostsIntent.ToggleFavorite(post.toDomainModel())) }
+                                        .clickable { onIntent(PostsIntent.OnPostClick(post.toDomainModel())) }
+                                ) {
+                                    PostItem(
+                                        post = post,
+                                        onFavoriteClick = { onIntent(PostsIntent.ToggleFavorite(post.toDomainModel())) }
+                                    )
                                 }
-                                Divider(
-                                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                    thickness = 1.dp
-                                )
+                                HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
                             }
                         }
                     }
@@ -149,13 +153,15 @@ private fun PostsContentPreviewData() {
                         id = 1,
                         userId = 1,
                         title = "This is a preview title",
-                        body = "This is a preview body for the post item, it can be quite long."
+                        body = "This is a preview body for the post item, it can be quite long.",
+                        isFavorite = false
                     ),
                     PostUiModel(
                         id = 2,
                         userId = 1,
                         title = "Another preview title",
-                        body = "Another preview body to see how multiple items look in a list."
+                        body = "Another preview body to see how multiple items look in a list.",
+                        isFavorite = false
                     )
                 )
             ),

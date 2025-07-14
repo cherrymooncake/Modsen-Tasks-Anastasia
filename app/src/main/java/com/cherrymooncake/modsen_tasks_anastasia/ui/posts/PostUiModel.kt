@@ -6,7 +6,8 @@ data class PostUiModel (
     val userId: Int,
     val id: Int,
     val title: String,
-    val body: String
+    val body: String,
+    val isFavorite: Boolean
 )
 
 fun PostUiModel.toDomainModel(): PostDomainModel {
@@ -14,7 +15,8 @@ fun PostUiModel.toDomainModel(): PostDomainModel {
         id = this.id,
         userId = this.userId,
         title = this.title,
-        body = this.body
+        body = this.body,
+        isFavorite = this.isFavorite
     )
 }
 
@@ -23,6 +25,7 @@ fun PostDomainModel.toUiModel(): PostUiModel {
         userId = this.userId,
         id = this.id,
         title = this.title,
-        body = this.body
+        body = this.body,
+        isFavorite = this.isFavorite
     )
 }

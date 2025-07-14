@@ -5,7 +5,7 @@ import com.cherrymooncake.modsen_tasks_anastasia.domain.error.ExceptionDomainMod
 import com.cherrymooncake.modsen_tasks_anastasia.domain.model.CommentDomainModel
 import com.cherrymooncake.modsen_tasks_anastasia.domain.model.PostDomainModel
 
-interface IPostsRepository {
+interface IPostsRemoteRepository {
     suspend fun getPosts(): TResult<List<PostDomainModel>, ExceptionDomainModel>
     suspend fun getComments(postId: Int): TResult<List<CommentDomainModel>, ExceptionDomainModel>
 }

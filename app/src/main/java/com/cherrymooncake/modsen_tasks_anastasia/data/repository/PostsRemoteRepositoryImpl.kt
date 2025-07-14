@@ -7,13 +7,13 @@ import com.cherrymooncake.modsen_tasks_anastasia.data.api.IPostApi
 import com.cherrymooncake.modsen_tasks_anastasia.domain.error.ExceptionDomainModel
 import com.cherrymooncake.modsen_tasks_anastasia.domain.model.CommentDomainModel
 import com.cherrymooncake.modsen_tasks_anastasia.domain.model.PostDomainModel
-import com.cherrymooncake.modsen_tasks_anastasia.domain.repository.IPostsRepository
+import com.cherrymooncake.modsen_tasks_anastasia.domain.repository.IPostsRemoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PostsRepositoryImpl(
+class PostsRemoteRepositoryImpl(
     private val postsApi: IPostApi
-) : IPostsRepository {
+) : IPostsRemoteRepository {
     override suspend fun getPosts(): TResult<List<PostDomainModel>, ExceptionDomainModel> =
         withContext(Dispatchers.IO) {
             runCatching {

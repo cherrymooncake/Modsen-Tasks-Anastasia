@@ -15,6 +15,7 @@ class App : Application() {
             androidLogger(Level.DEBUG)
             androidContext(this@App)
             modules(
+                databaseModule,
                 dataModule,
                 domainModule,
                 appModule

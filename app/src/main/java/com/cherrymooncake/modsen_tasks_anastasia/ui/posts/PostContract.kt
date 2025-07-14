@@ -14,6 +14,7 @@ sealed interface PostsIntent {
     data object LoadPosts : PostsIntent
     data class OnSearchQueryChanged(val query: String) : PostsIntent
     data class OnPostClick(val post: PostDomainModel) : PostsIntent
+    data class ToggleFavorite(val post: PostDomainModel) : PostsIntent
 }
 
 sealed interface PostsEvent {

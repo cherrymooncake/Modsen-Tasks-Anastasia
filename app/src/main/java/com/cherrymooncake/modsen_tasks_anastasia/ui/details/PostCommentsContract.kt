@@ -13,4 +13,5 @@ sealed interface PostCommentsEvent {
 }
 
 sealed interface PostCommentsIntent {
+    data object ToggleFavorite : PostCommentsIntent
 }
